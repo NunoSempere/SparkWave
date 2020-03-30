@@ -1,0 +1,13 @@
+{
+  "name": "sparkwave_application_dependent_libraries",
+  "version": "1.0.0",
+  "description": "The first stage of the SparkWave application https://docs.google.com/document/d/1njQJWXe_FGQ87ANEURbCz5ou4XdW0TzwXBrxi6JXL8Y/edit",
+  "main": "start.js",
+  "scripts": {
+  },
+  "author": "Nuño Sempere",
+  "license": "ISC",
+  "dependencies": {
+    "assert": "^2.0.0"
+  }
+}
