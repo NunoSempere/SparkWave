@@ -97,37 +97,51 @@ async function processLineByLineAndProduceLibraryTree() {
 processLineByLineAndProduceLibraryTree();
 
 /*PROCESS THE DEPENDENCY TREE*/
+
 let processTheDependencyTreeStack = (libraryTree) => {    
+    let areThereLibrariesWhichStillHaveMoreDependencies = (libraryTree) => {
+        return Object.keys(libraryTree)
+            .some(libName => (
+                !isEmpty(libraryTree[libName].dependenciesStack)
+            ))
+    }
+
+    /* Unpack the stack */
+    while(areThereLibrariesWhichStillHaveMoreDependencies(libraryTree)){
+        for(let libName in libraryTree){
+            let lib = libraryTree[libName]
+
+            if(!isEmpty(lib.dependenciesStack)){
+                let topOfStack = (lib.dependenciesStack).shift();
+                (lib.allDependencies).push(topOfStack);
+
+                let topOfStackTree = libraryTree[topOfStack]
+                if(topOfStackTree != undefined){
+                    
+                    lib.allDependencies = (lib.allDependencies)
+                        .concat(topOfStackTree.allDependencies)
+                    lib.dependenciesStack = lib.dependenciesStack
+                        .concat(topOfStackTree.dependenciesStack)
+                    
+                    lib.allDependencies = unique(lib.allDependencies)                
+                    lib.dependenciesStack = unique(lib.dependenciesStack)
+                    
+                    lib.dependenciesStack = (lib.dependenciesStack)
+                        .filter(dep=>(
+                            !(lib.allDependencies).includes(dep) 
+                            && dep != libName
+                        ))
+                }
+            }
+
+        }
+    }
+
+    /* Formatting */
     let result = []
     for(let libName in libraryTree){
-        let lib = libraryTree[libName]
-        
-        while(!isEmpty(lib.dependenciesStack)){
-            
-            let topOfStack = (lib.dependenciesStack).shift();
-            (lib.allDependencies).push(topOfStack);
-
-            let topOfStackTree = libraryTree[topOfStack]
-            if(topOfStackTree != undefined){
-                
-                lib.allDependencies = (lib.allDependencies)
-                    .concat(topOfStackTree.allDependencies)
-                lib.dependenciesStack = lib.dependenciesStack
-                    .concat(topOfStackTree.dependenciesStack)
-                
-                lib.allDependencies = unique(lib.allDependencies)                
-                lib.dependenciesStack = unique(lib.dependenciesStack)
-                
-                lib.dependenciesStack = (lib.dependenciesStack)
-                    .filter(dep=>(
-                        !(lib.allDependencies).includes(dep) 
-                        && dep != libName
-                    ))
-            }
-            
-        }
-        
-        (lib.allDependencies).sort()
+        let lib = libraryTree[libName];
+        (lib.allDependencies).sort();
 
         result.push(
             libName 
@@ -135,8 +149,7 @@ let processTheDependencyTreeStack = (libraryTree) => {
             + (lib.allDependencies)
                 .join(dividerStringBetweenDeps)
         )
+
     }
-
-    return result
-
+    return result 
 }
