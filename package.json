@@ -1,13 +1,15 @@
 {
-  "name": "sparkwave_application_dependent_libraries",
+  "name": "sparkwave#ff1493",
   "version": "1.0.0",
-  "description": "The first stage of the SparkWave application https://docs.google.com/document/d/1njQJWXe_FGQ87ANEURbCz5ou4XdW0TzwXBrxi6JXL8Y/edit",
-  "main": "start.js",
+  "description": "The first stage of a job application for SparkWave.tech",
+  "main": "trackDependenciesCommandLine.js",
   "scripts": {
+    "test": "mocha"
   },
   "author": "Nuño Sempere",
   "license": "ISC",
   "dependencies": {
-    "assert": "^2.0.0"
+    "chai": "^4.2.0",
+    "mocha": "^7.1.1"
   }
 }
