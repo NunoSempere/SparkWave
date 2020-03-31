@@ -1,5 +1,3 @@
-// https://docs.google.com/document/d/1njQJWXe_FGQ87ANEURbCz5ou4XdW0TzwXBrxi6JXL8Y/edit
-
 /* LIBRARIES */
 'use strict';
 const fs = require('fs');
