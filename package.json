@@ -1,5 +1,5 @@
 {
-  "name": "sparkwave#ff1493",
+  "name": "@lokiodinevich/sparkwave0xff1493",
   "version": "1.0.0",
   "description": "The first stage of a job application for SparkWave.tech",
   "main": "trackDependenciesCommandLine.js",
