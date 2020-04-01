@@ -1,18 +1,150 @@
 'use strict';
 
-const lib = require("../trackDependenciesLib.js")
+const tD = require("../trackDependencies.js")
 const errors = require("../errors.js")
 var {assert, expect} = require('chai');
 
-describe('#parseLine', async function() {
+describe('#processTheDependencyTreeStack', function() {
+
+  let trees = [
+  // INPUT1
+  ({
+    X: {
+      libraryName: 'X',
+      finalDependenciesList: [],
+      dependenciesStack: [ 'Y', 'R' ]
+    },
+    Y: {
+      libraryName: 'Y',
+      finalDependenciesList: [],
+      dependenciesStack: [ 'Z' ]
+    }
+  }),
+  // INPUT2
+  ({
+    Y: {
+      libraryName: 'Y',
+      finalDependenciesList: [],
+      dependenciesStack: [ 'Z' ]
+    },
+    A: {
+      libraryName: 'A',
+      finalDependenciesList: [],
+      dependenciesStack: [ 'Q', 'R', 'S' ]
+    },
+    X: {
+      libraryName: 'X',
+      finalDependenciesList: [],
+      dependenciesStack: [ 'Y' ]
+    },
+    Z: {
+      libraryName: 'Z',
+      finalDependenciesList: [],
+      dependenciesStack: [ 'A', 'B' ]
+    }
+  }
+  ),
+  // INPUT3
+  ({
+    A: {
+      libraryName: 'A',
+      finalDependenciesList: [],
+      dependenciesStack: [ 'B', 'C' ]
+    },
+    B: {
+      libraryName: 'B',
+      finalDependenciesList: [],
+      dependenciesStack: [ 'C', 'E' ]
+    },
+    C: {
+      libraryName: 'C',
+      finalDependenciesList: [],
+      dependenciesStack: [ 'G' ]
+    },
+    D: {
+      libraryName: 'D',
+      finalDependenciesList: [],
+      dependenciesStack: [ 'A', 'F' ]
+    },
+    E: {
+      libraryName: 'E',
+      finalDependenciesList: [],
+      dependenciesStack: [ 'F' ]
+    },
+    F: {
+      libraryName: 'F',
+      finalDependenciesList: [],
+      dependenciesStack: [ 'H' ]
+    }
+  }),
+  // cyclic
+  ({
+    A: {
+      libraryName: 'A',
+      finalDependenciesList: [],
+      dependenciesStack: [ 'B' ]
+    },
+    B: {
+      libraryName: 'B',
+      finalDependenciesList: [],
+      dependenciesStack: [ 'C' ]
+    },
+    C: {
+      libraryName: 'C',
+      finalDependenciesList: [],
+      dependenciesStack: [ 'D' ]
+    },
+    D: {
+      libraryName: 'D',
+      finalDependenciesList: [],
+      dependenciesStack: [ 'E' ]
+    },
+    E: {
+      libraryName: 'E',
+      finalDependenciesList: [],
+      dependenciesStack: [ 'A' ]
+    }
+  })
+];
+  let outputs = [
+`X depends on R Y Z
+Y depends on Z`,
+`Y depends on A B Q R S Z
+A depends on Q R S
+X depends on A B Q R S Y Z
+Z depends on A B Q R S`,
+`A depends on B C E F G H
+B depends on C E F G H
+C depends on G
+D depends on A B C E F G H
+E depends on F H
+F depends on H`,
+`A depends on B C D E
+B depends on A C D E
+C depends on A B D E
+D depends on A B C E
+E depends on A B C D`
+  ];
+  
+
+  for(let i in trees){
+    it('should deal adequately with a variety of tree stacks: #' + i, () =>  {
+      let result = tD.processTheDependencyTreeStack(trees[i]);
+      let resultPrettyPrint = tD.prettyPrintLibTree(result);
+      assert.equal(resultPrettyPrint, outputs[i]);
+    });
+  }
+});
+
+describe('#createSubtreeFromLine', async function() {
   it('should create a subtree when given a normal line', function() {
-    let parsedLine = lib.parseLine("A depends on B C D")
+    let parsedLine = tD.createSubtreeFromLine("A depends on B C D")
     assert.equal(parsedLine[0], "A")
     assert.deepEqual(
       parsedLine[1],
       ({
         "libraryName": "A",
-        "allDependencies": [],
+        "finalDependenciesList": [],
         "dependenciesStack": ["B", "C", "D"]
       })
     )
@@ -20,13 +152,13 @@ describe('#parseLine', async function() {
 
   it('should create a subtree when given a very long line', function() {
 
-    let parsedLine = lib.parseLine("A depends on "+loremIpsum)
+    let parsedLine = tD.createSubtreeFromLine("A depends on "+loremIpsum)
     assert.equal(parsedLine[0], "A")
     assert.deepEqual(
       parsedLine[1],
       ({
         "libraryName": "A",
-        "allDependencies": [],
+        "finalDependenciesList": [],
         "dependenciesStack": loremIpsumArray
       })
     )
@@ -36,7 +168,7 @@ describe('#parseLine', async function() {
   for(let malformedInput of malformedInputs){
     it('should throw an error when given a malformed input: "'+malformedInput+'"', function() {
       try {
-        lib.parseLine(malformedInput);
+        tD.createSubtreeFromLine(malformedInput);
         throw new Error(errors.wrongError)
       } catch (e) { 
         if (e.message == errors.wrongError) {
@@ -50,15 +182,8 @@ describe('#parseLine', async function() {
 
 });
 
-describe('#processTheDependencyTreeStack', function() {
-  it('should deal adequately with a variety of stack trees', function() {
-    //assert.equal(,);
-  });
-});
-
-
-describe('#processLineByLineAndProduceLibraryTree', async function() {
-  let fileNames = ["./test/INPUT1.txt","./test/INPUT2.txt","./test/INPUT3.txt"];
+describe('#fileNameIntoOutput', async function() {
+  let fileNames = ["./test/INPUT1.txt","./test/INPUT2.txt","./test/INPUT3.txt", "./test/cyclical.txt"];
   let outputs = [
 `X depends on R Y Z
 Y depends on Z`,
@@ -73,18 +198,24 @@ B depends on C E F G H
 C depends on G
 D depends on A B C E F G H
 E depends on F H
-F depends on H`
+F depends on H`,
+`A depends on B C D E
+B depends on A C D E
+C depends on A B D E
+D depends on A B C E
+E depends on A B C D`
+
   ];
   
 
   for(let i in fileNames){
     it('should output a string with the dependencies when given a filename: ' + fileNames[i], (done) =>  {
-      let callback = (libraryTree) => {
-        let result = lib.processTheDependencyTreeStack(libraryTree);
-        assert.equal(result.join("\n"), outputs[i]);
+      let callback = (result) => {
+        let resultPrettyPrint = tD.prettyPrintLibTree(result);
+        assert.equal(resultPrettyPrint, outputs[i]);
         done();
       }
-      lib.processLineByLineAndProduceLibraryTree(fileNames[i], callback)       
+      tD.fileNameIntoOutput(fileNames[i], callback)       
     });
   }
 

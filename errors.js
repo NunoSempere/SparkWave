@@ -9,16 +9,6 @@ ________________________________________________________
 `
 exports.lineMalformed = lineMalformed;
 
-let wrongNumberOfArguments = `
-________________________________________________
-
-The programme expected an expression of the form
-    "node trackDependencies.js someFilename.txt"
-but received the wrong number of arguments
-________________________________________________
-`
-exports.wrongNumberOfArguments = wrongNumberOfArguments;
-
 let isNotTxtFile = `
 ________________________________________________
 
