@@ -154,7 +154,7 @@ let createSubtreeFromLine = (line) => {
 }
 exports.createSubtreeFromLine = createSubtreeFromLine;
 
-async function fileNameIntoOutput(fileNameDependentLibraries, callback) {
+async function fileNameIntoOutput(fileNameDependentLibraries, callback=prettyPrintLibTree) {
     var libraryTree = ({})
     
     const fileStream = fs.createReadStream(fileNameDependentLibraries);
