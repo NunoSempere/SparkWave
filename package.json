@@ -1,6 +1,6 @@
 {
   "name": "@lokiodinevich/sparkwave0xff1493",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "The first stage of a job application for SparkWave.tech",
   "main": "trackDependencies.js",
   "scripts": {
