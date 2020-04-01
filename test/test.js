@@ -130,7 +130,7 @@ E depends on A B C D`
   for(let i in trees){
     it('should deal adequately with a variety of tree stacks: #' + i, () =>  {
       let result = tD.processTheDependencyTreeStack(trees[i]);
-      let resultPrettyPrint = tD.prettyPrintLibTree(result);
+      let resultPrettyPrint = tD.prettyFormatLibTree(result);
       assert.equal(resultPrettyPrint, outputs[i]);
     });
   }
@@ -211,7 +211,7 @@ E depends on A B C D`
   for(let i in fileNames){
     it('should output a string with the dependencies when given a filename: ' + fileNames[i], (done) =>  {
       let callback = (result) => {
-        let resultPrettyPrint = tD.prettyPrintLibTree(result);
+        let resultPrettyPrint = tD.prettyFormatLibTree(result);
         assert.equal(resultPrettyPrint, outputs[i]);
         done();
       }

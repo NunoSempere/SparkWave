@@ -101,7 +101,7 @@ exports.processTheDependencyTreeStack = processTheDependencyTreeStack;
 
 /* FORMATTING */
 
-let prettyPrintLibTree = (libraryTree) => {
+let prettyFormatLibTree = (libraryTree) => {
     let result = []
     for(let libName in libraryTree){
         let lib = libraryTree[libName];
@@ -117,8 +117,13 @@ let prettyPrintLibTree = (libraryTree) => {
     }
     return result.join("\n")
 }
-exports.prettyPrintLibTree = prettyPrintLibTree;
+exports.prettyFormatLibTree = prettyFormatLibTree;
 
+let prettyPrintLibTree = (result) => {
+    let resultPrettyFormat = prettyFormatLibTree(result);
+    console.log(resultPrettyFormat)
+}
+exports.prettyPrintLibTree = prettyPrintLibTree;
 
 /* INPUT-OUTPUT */
 let createSubtreeFromLine = (line) => {
@@ -177,20 +182,13 @@ async function fileNameIntoOutput(fileNameDependentLibraries, callback) {
 exports.fileNameIntoOutput = fileNameIntoOutput;
 
 /* COMMAND LINE UTILITY */
-let callbackCommandLine = (result) => {
-    // separating this callback allows for easier testing.
-    let resultPrettyPrint = prettyPrintLibTree(result);
-    console.log(resultPrettyPrint)
-}
-exports.callbackCommandLine = callbackCommandLine;
-
 let commandLineUtility  = () => {
     if(require.main === module && process.argv.length==3){
         const fileName = process.argv[2]
         if(!fileName.endsWith(".txt")){
             throw new Error(errors.isNotTxtFile);
         }else{
-            fileNameIntoOutput(fileName, callbackCommandLine);
+            fileNameIntoOutput(fileName, prettyPrintLibTree);
         }
     }
 }

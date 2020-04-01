@@ -22,7 +22,9 @@ node trackDependencies.js yourFileName.txt # Use your own file
 
 ### Within a project (after installing from npm.)
 ```
-const lib = require("sparkwave0xff1493")
-lib.fileNameIntoOutput("yourFileName.txt")
+const lib = require("@lokiodinevich/sparkwave0xff1493")
+console.log(
+    lib.fileNameIntoOutput("yourFileName.txt")
+)
 
 ```
