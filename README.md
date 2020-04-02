@@ -3,7 +3,7 @@
 
 ## From git:
 ```
-git clone https://github.com/NunoSempere/sparkwave0xff1493.git
+git clone https://github.com/NunoSempere/sparkwave0xff1493
 cd sparkwave0xff1493
 npm install
 ```
@@ -24,5 +24,18 @@ node trackDependencies.js yourFileName.txt # Use your own file
 ```
 const lib = require("@lokiodinevich/sparkwave0xff1493")
 lib.fileNameIntoOutput("yourFileName.txt")
+
+```
+
+```
+const lib = require("@lokiodinevich/sparkwave0xff1493")
+
+let callback = (result) => {
+    console.log(result)
+    let resultPrettyFormat = lib.prettyFormatLibTree(result);
+    console.log(resultPrettyFormat)
+}
+
+lib.fileNameIntoOutput("yourFileName.txt", callback)
 
 ```

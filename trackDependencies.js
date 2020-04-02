@@ -156,18 +156,22 @@ exports.createSubtreeFromLine = createSubtreeFromLine;
 
 async function fileNameIntoOutput(fileNameDependentLibraries, callback=prettyPrintLibTree) {
     var libraryTree = ({})
-    
     const fileStream = fs.createReadStream(fileNameDependentLibraries);
     const rl = readline.createInterface({
       input: fileStream,
       crlfDelay: Infinity
     });
 
+    fileStream.on('error', (e) => console.log("Haleluya"))
+
     rl.on('line', (line) => {
         // parse each line into a format which makes processing easier.
         let [libraryName, subTree] = createSubtreeFromLine(line)
+        if(libraryTree.hasOwnProperty(libraryName)){
+            throw new Error(errors.libraryIsRepeated)
+        }
         libraryTree[libraryName] = subTree
-    });
+    })
 
     rl.on('close', () => {
         let result = processTheDependencyTreeStack(libraryTree);

@@ -203,8 +203,7 @@ F depends on H`,
 B depends on A C D E
 C depends on A B D E
 D depends on A B C E
-E depends on A B C D`
-
+E depends on A B C D`,
   ];
   
 
@@ -219,40 +218,37 @@ E depends on A B C D`
     });
   }
 
-  // Deal with malformed cases
-
-  // Deal with cases with cycles and other tricky cases.
-
-});
-
-/*
-
-describe('#processTheDependencyTreeStack', function() {
-  it('should  ', function() {
-    assert.equal(,);
-  });
-});
-
-*/
-/* ERRORS */
-
-/*
-describe('Testing Error States', () => {
-  it('Throws an error when called with missing arguments', () => {
-    try {
-      functionundertest(); // this should fail
-      assert.fail('expected exception not thrown'); // this throws an AssertionError
-    } catch (e) { // this catches all errors, those thrown by the function under test
-                  // and those thrown by assert.fail
-      if (e instanceof AssertionError) {
-        // bubble up the assertion error
-        throw e;
-      }
-      assert.equal(e.message, 'Invalid Arguments');
+  let chainedFileName = "./test/chained.txt"
+  let chainedOutPutStart = 'A depends on Alfa B Bravo C Charlie D Delta E Echo F Foxtrot G Golf H Hotel I India J Juliett K Kilo L Lima M Mike N November O Oscar P Papa Q Quebec R Romeo S Sierra T Tango U Uniform V Victor W Whiskey X X-Ray Y Yankee Z Zulu'
+  it('should output a string with the dependencies when given a file which contains a long list of chained libraries: ' + chainedFileName, (done) =>  {
+    let callback = (result) => {
+      let resultPrettyPrint = tD.prettyFormatLibTree(result);
+      assert.isTrue(resultPrettyPrint.startsWith(chainedOutPutStart));
+      done();
     }
+    tD.fileNameIntoOutput(chainedFileName, callback)       
   });
+
+
+  let corruptedFileNames = ["./test/emptyFile.txt", "./test/nonExistentFile.txt", "./test/repeated.txt"]
+  let errorsCorruptedFiles = [errors.lineMalformed, errors.ENOENT_test, errors.libraryIsRepeated]  
+  /* 
+    The errors are thrown just fine, but the standard readline library in node.js has a bug in their error handling (!). 
+    I've made a comment in this issue: https://github.com/nodejs/node/issues/30831
+  */
+  /*
+  for(let i in corruptedFileNames){
+    it("should throw an error when given an input with corrupted files: " + corruptedFileNames[i], async (done) => {
+      let callback = (result) => {done()}
+      tD.fileNameIntoOutput(corruptedFileNames[i], callback).then(() => {
+        console.log("all done");
+      }).catch(err => {
+          assert.equal(err.message, errorsCorruptedFiles[i]);
+      });
+    })
+  }
+  */
 });
-*/
 
 
 /* LOREM IPSUM */
@@ -260,4 +256,4 @@ const unique = array => [...new Set(array)];
 
 let loremIpsum  = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla ac varius massa. Maecenas eget mattis erat. Mauris luctus libero eget tortor finibus maximus eget non nulla. Nunc at maximus nisl. Praesent efficitur arcu metus, sed porttitor leo ultricies nec. Suspendisse in quam nisl. Suspendisse et auctor mi. Sed vulputate, risus id dictum tincidunt, risus ante faucibus arcu, vitae fringilla mi turpis nec erat. Suspendisse ac ex eu tortor fringilla pretium at eget arcu. Proin dapibus est ut aliquet fermentum. Pellentesque quis consectetur augue. Morbi maximus, lorem non consequat vulputate, metus libero lacinia mauris, id tempus mauris risus ac purus. Fusce."
 
-let loremIpsumArray = unique([ 'Lorem', 'ipsum', 'dolor', 'sit', 'amet,', 'consectetur', 'adipiscing',  'elit.', 'Nulla', 'ac', 'varius', 'massa.', 'Maecenas', 'eget',  'mattis', 'erat.', 'Mauris', 'luctus',  'libero', 'eget', 'tortor', 'finibus',  'maximus', 'eget',  'non', 'nulla.', 'Nunc',  'at', 'maximus',  'nisl.', 'Praesent', 'efficitur', 'arcu', 'metus,', 'sed', 'porttitor', 'leo', 'ultricies',  'nec.',  'Suspendisse', 'in', 'quam',  'nisl.', 'Suspendisse', 'et', 'auctor', 'mi.', 'Sed',  'vulputate,',  'risus', 'id', 'dictum', 'tincidunt,', 'risus', 'ante', 'faucibus', 'arcu,', 'vitae', 'fringilla', 'mi', 'turpis', 'nec', 'erat.', 'Suspendisse', 'ac', 'ex', 'eu', 'tortor',  'fringilla', 'pretium', 'at', 'eget',  'arcu.', 'Proin', 'dapibus', 'est', 'ut', 'aliquet', 'fermentum.',  'Pellentesque', 'quis',  'consectetur', 'augue.',  'Morbi', 'maximus,', 'lorem', 'non', 'consequat',  'vulputate,',  'metus', 'libero', 'lacinia',  'mauris,', 'id', 'tempus', 'mauris', 'risus', 'ac', 'purus.', 'Fusce.' ])
+const loremIpsumArray = unique([ 'Lorem', 'ipsum', 'dolor', 'sit', 'amet,', 'consectetur', 'adipiscing',  'elit.', 'Nulla', 'ac', 'varius', 'massa.', 'Maecenas', 'eget',  'mattis', 'erat.', 'Mauris', 'luctus',  'libero', 'eget', 'tortor', 'finibus',  'maximus', 'eget',  'non', 'nulla.', 'Nunc',  'at', 'maximus',  'nisl.', 'Praesent', 'efficitur', 'arcu', 'metus,', 'sed', 'porttitor', 'leo', 'ultricies',  'nec.',  'Suspendisse', 'in', 'quam',  'nisl.', 'Suspendisse', 'et', 'auctor', 'mi.', 'Sed',  'vulputate,',  'risus', 'id', 'dictum', 'tincidunt,', 'risus', 'ante', 'faucibus', 'arcu,', 'vitae', 'fringilla', 'mi', 'turpis', 'nec', 'erat.', 'Suspendisse', 'ac', 'ex', 'eu', 'tortor',  'fringilla', 'pretium', 'at', 'eget',  'arcu.', 'Proin', 'dapibus', 'est', 'ut', 'aliquet', 'fermentum.',  'Pellentesque', 'quis',  'consectetur', 'augue.',  'Morbi', 'maximus,', 'lorem', 'non', 'consequat',  'vulputate,',  'metus', 'libero', 'lacinia',  'mauris,', 'id', 'tempus', 'mauris', 'risus', 'ac', 'purus.', 'Fusce.' ])
